@@ -1,0 +1,267 @@
+---
+title: "Spatial Processing Benchmarks in R"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+  html_notebook:
+    highlight: tango
+    theme: spacelab
+---
+
+```{r install-packages, eval=FALSE}
+# install all required packages
+pkgs = c("bench", "microbenchmark", "sf", "stars", "terra", "exactextractr")
+install.packages(pkgs)
+```
+
+# Introduction
+
+Benchmarking code in R can be done in several ways - using a built-in function or using more advanced functions from dedicated packages.
+The simplest way is the `system.time()` function.
+First, we should read the documentation to see how this function works and what it returns.
+To view the documentation, use the question mark "?" before the function name.
+
+```{r eval=FALSE}
+?system.time
+```
+
+We will test it on an example.
+
+```{r}
+# generate numbers from normal distribution
+# (n = 10,000,000)
+t = system.time(rnorm(1e7))
+t
+```
+
+We are most interested in the third value returned `"elapsed"`, which is the actual execution time of the tested function in seconds (lower value is better/faster).
+Of course, we can refer to this value directly using the index in square brackets.
+
+```{r collapse=TRUE}
+t[[3]]
+t[["elapsed"]]
+```
+
+Now let's check out the more advanced functions from the [{bench}](https://bench.r-lib.org/) and [{microbenchmark}](https://cran.r-project.org/web/packages/microbenchmark/index.html) packages on other data.
+For the next examples, we can generate a data frame with 3 columns.
+
+```{r}
+df = data.frame(x = rnorm(1e5), y = rnorm(1e5), z = rnorm(1e5))
+str(df)
+```
+
+Benchmarking in the `{bench}` package can be done using the `mark()` function.
+It is quite intuitive to call the function explicitly from the package like this: `bench::mark()` (without having to load the entire package).
+
+As a test, we will see how fast can be calculated the sum for each row of a data frame using two different functions: `rowSums()` and `apply()`.
+
+```{r warning=FALSE}
+t = bench::mark(
+  iterations = 10, check = TRUE,
+  rowSums = rowSums(df),
+  apply = apply(df, MARGIN = 1, FUN = sum) # 1 indicates rows
+)
+t[, 1:5]
+```
+
+In the `{microbenchmark}` package, we have an analogous `microbenchmark()` function that works similarly, but returns slightly different parameters.
+
+```{r}
+library(microbenchmark)
+t = microbenchmark(
+  times = 10, check = "identical",
+  rowSums = rowSums(df),
+  apply = apply(df, 1, sum)
+)
+t
+```
+
+We can also easily prepare a visualization (in this case a boxplot).
+Moreover, there is `autoplot()` function in the `{ggplot2}` package with different types of plots.
+
+```{r}
+boxplot(t)
+```
+
+As you can see, both functions allow for timings aggregation (mean, median, etc.) from multiple iterations and results validation, which is a significant improvement over `system.time()`.
+
+This section does not exhaust the topic.
+A more complex approach to benchmarks is code profiling, that is, testing the performance of large blocks of code.
+This allows us to find out which function is bottleneck.
+In R, this can be done using the `Rprof()` function or [{profvis}](https://rstudio.github.io/profvis/) package.
+However, for internal C/C++ code, this is not possible (this is true for most packages that are based on GDAL and GEOS).
+
+For more information, see the books:
+
+  - [Advanced R](https://adv-r.hadley.nz/) by Hadley Wickham (chapter [23 Measuring performance](https://adv-r.hadley.nz/perf-measure.html))
+  - [Efficient R programming](https://csgillespie.github.io/efficientR/) by Colin Gillespie and Robin Lovelace (chapter [1.6 Benchmarking and profiling](https://csgillespie.github.io/efficientR/introduction.html#benchmarking-and-profiling))
+
+**Exercise** 
+
+Compare computing the mean value of the vector using `mean()` and `sum() / length ()` functions.
+
+# Part I: Raster Data
+
+## Data Source
+
+We will use [Digital Surface Model](https://en.wikipedia.org/wiki/Digital_elevation_model) (DSM) from satellite [Shuttle Radar Topography Mission](https://www2.jpl.nasa.gov/srtm/mission.htm) (SRTM).
+You can download the data in 5° x 5° tiles from this website: https://srtm.csi.cgiar.org/srtmdata/.
+You can choose any tile, but we will use a tile with ID [**srtm_39_02**](https://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_39_02.zip) as an example.
+The data is available as a single layer GeoTIFF with a resolution of approximately 90 m (6000 x 6000 pixels).
+The coordinate reference system (CRS) of the raster is WGS84 (EPSG:4326), and the datatype is `int16`.
+
+## Benchmarks
+
+In the first step, let's load all the necessary spatial packages.
+
+```{r message=FALSE}
+library(sf)
+library(stars)
+library(terra)
+library(exactextractr)
+```
+
+Next, let's create an empty folder into which we will download the raster.
+
+```{r}
+url = "https://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_39_02.zip"
+
+if (!dir.exists("data")) {
+  dir.create("data")
+  download.file(url, "data/srtm.zip")
+  unzip("data/srtm.zip", exdir = "data") # ~70 MB tif
+}
+
+# list files after extracting the archive
+list.files("data")
+# or save path to raster as variable
+f = list.files("data", pattern =  "\\.tif$", full.names = TRUE)
+```
+
+In the following sections, we will define the tasks in which we will test our packages.
+
+### Data Loading
+
+Let's start with the simplest task - loading raster data into R.
+In the `{stars}` package, the `read_stars()` function is used for this, and in the `{terra}` package, the `rast()` function.
+
+```{r}
+x = read_stars("data/srtm_39_02.tif", proxy = FALSE)
+x
+```
+
+```{r message=FALSE}
+plot(x)
+```
+
+```{r}
+y = rast("data/srtm_39_02.tif")
+y
+```
+
+```{r}
+plot(y)
+```
+
+Before we go any further, we need to note one very important point.
+In the `rast()` documentation, we can read:
+
+```
+When a SpatRaster is created from a file, it does not load the cell (pixel) values into memory (RAM). It only reads the parameters that describe the geometry of the SpatRaster, such as the number of rows and columns and the coordinate reference system. The actual values will be read when needed.
+```
+
+So, in fact, when using the `rast()` function, we do not load the raster into memory, but only the metadata describing it.
+This is of great importance, because if we do not load it immediately, all the functions tested, will include overhead caused by loading the raster into memory.
+To check if the raster has been loaded into memory by `{terra}`, we can use the `inMemory()` function, which will return a logical value.
+
+```{r}
+# is the raster in memory?
+inMemory(y)
+```
+
+As we noted earlier, the raster is not loaded into memory.
+To actually load the raster into memory, we need to use the `set.values()` function.
+
+```{r}
+set.values(y)
+inMemory(y)
+```
+
+The situation is similar in the `{stars}` package, but in this case the argument in the `read_stars()` function takes logical values that define whether the file will be directly loaded into memory or not.
+See the documentation excerpt below:
+
+```
+?read_stars
+proxy: logical; if TRUE, an object of class stars_proxy is read which contains array metadata only; if FALSE the full array data is read in memory. (...)
+```
+
+After this explanation, we can move on to the benchmark.
+The argument `check` in `{bench}` must be obligatorily set to `FALSE`, because the tested packages return different data structures.
+
+```{r}
+t = bench::mark(
+  iterations = 5, check = FALSE, memory = FALSE,
+  stars = read_stars("data/srtm_39_02.tif", proxy = FALSE),
+  terra = set.values(rast("data/srtm_39_02.tif"))
+)
+t[, 1:4]
+```
+
+To be fair, we must also note that `{stars}` always reads data as double, and `{terra}` returns integer if the input raster was integer.
+This affects the speed of the operation and the amount of RAM memory used.
+
+```{r}
+# {stars}
+typeof(x[[1]]) # select first attribute `srtm_39_02`
+# {terra}
+is.int(y) # has raster integer values?
+```
+
+**Exercise**
+
+Prepare a task in which you check the performance of pixel classification using the height condition.
+For example, all pixels above the threshold of 200 m will become 1, and all pixels below 0.
+This task can be done in many ways, below are some ideas:
+
+```{r eval = FALSE}
+# {stars}
+## method I
+xx = x # duplicate object
+xx[xx < 200] = 0
+xx[xx >= 200] = 1
+typeof(xx[[1]])
+
+## method II
+xx = x
+xx = cut(xx, breaks = c(-50, 200, 1500), labels = c("0", "1"))
+typeof(xx[[1]])
+
+plot(xx, col = c("blue", "red"))
+table(xx[[1]]) # frequency table
+
+rm(xx) # remove object from environment
+```
+
+```{r eval = FALSE}
+# {terra}
+## method I
+yy = ifel(y >= 200, 1, 0)
+
+## method II
+mat = matrix(c(-50, 200, 0,
+               200, 1500, 1),
+             nrow = 2, byrow = TRUE)
+yy = classify(y, mat)
+
+plot(yy, col = c("blue", "red"))
+table(values(yy))
+
+rm(yy)
+```
+
+
+# Part II: Vector Data
+
+
+## Data Source
