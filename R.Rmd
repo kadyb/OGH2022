@@ -1,17 +1,15 @@
 ---
 title: "Spatial Processing Benchmarks in R"
+author: "Krzysztof Dyba"
 output:
   html_document:
     toc: yes
     toc_float: true
-  html_notebook:
-    highlight: tango
-    theme: spacelab
 ---
 
 ```{r install-packages, eval=FALSE}
 # install all required packages
-pkgs = c("bench", "microbenchmark", "sf", "stars", "terra", "exactextractr")
+pkgs = c("bench", "microbenchmark", "sf", "stars", "terra")
 install.packages(pkgs)
 ```
 
@@ -111,6 +109,8 @@ You can choose any tile, but we will use a tile with ID [**srtm_39_02**](https:/
 The data is available as a single layer GeoTIFF with a resolution of approximately 90 m (6000 x 6000 pixels).
 The coordinate reference system (CRS) of the raster is WGS84 (EPSG:4326), and the datatype is `int16`.
 
+Please be aware that this dataset is quite small and consists of only one layer, so the results are not entirely representative (especially for large-scale applications).
+
 ## Benchmarks
 
 In the first step, let's load all the necessary spatial packages.
@@ -119,7 +119,7 @@ In the first step, let's load all the necessary spatial packages.
 library(sf)
 library(stars)
 library(terra)
-library(exactextractr)
+sf_use_s2(FALSE) # use planar GEOS engine by default
 ```
 
 Next, let's create an empty folder into which we will download the raster.
@@ -218,7 +218,61 @@ typeof(x[[1]]) # select first attribute `srtm_39_02`
 is.int(y) # has raster integer values?
 ```
 
-**Exercise**
+### Cropping
+
+In the next task, we will test the raster cropping to the defined range.
+We loaded the packages and data in the previous section.
+First, let's check the extent of our raster (note that the coordinates in the WGS84 system are in degrees).
+
+```{r}
+st_bbox(x) # {stars}
+ext(y) # {terra}
+```
+
+Next, let's define a new smaller extent to which we will crop the raster.
+Note that objects of class `bbox` (`{stars}`) and `ext` (`{terra}`) have different coordinate orders.
+
+```{r}
+x_ext = st_bbox(c(xmin = 11, ymin = 51, xmax = 14, ymax = 53),
+             crs = st_crs(4326))
+y_ext = ext(11, 14, 51, 53)
+```
+
+Visualize the new extent:
+
+```{r message=FALSE}
+plot(x, axes = TRUE, main = NULL, reset = FALSE)
+# bbox object must be converted to sfc geometry
+plot(st_as_sfc(x_ext), add = TRUE, border = "red", lwd = 2)
+```
+
+Use the `st_crop()` function to crop the raster in `{stars}`, and use the `crop()` function in `{terra}`.
+
+```{r}
+x_crop = st_crop(x, x_ext)
+st_bbox(x_crop)
+
+y_crop = crop(y, y_ext)
+ext(y_crop)
+```
+
+Everything works fine, so we can move on to the benchmark.
+However, earlier we can remove unnecessary objects from the environment using the `rm()` function so that they don't take up space in memory.
+
+```{r warning=FALSE}
+rm(x_crop, y_crop)
+
+t = bench::mark(
+  iterations = 5, check = FALSE, memory = FALSE,
+  stars = st_crop(x, x_ext),
+  terra = crop(y, y_ext)
+)
+t[, 1:4]
+```
+
+### Downsampling
+
+### Exercise
 
 Prepare a task in which you check the performance of pixel classification using the height condition.
 For example, all pixels above the threshold of 200 m will become 1, and all pixels below 0.
@@ -232,15 +286,13 @@ xx[xx < 200] = 0
 xx[xx >= 200] = 1
 typeof(xx[[1]])
 
-## method II
+## method II (returns factor type, not numeric)
 xx = x
 xx = cut(xx, breaks = c(-50, 200, 1500), labels = c("0", "1"))
 typeof(xx[[1]])
 
 plot(xx, col = c("blue", "red"))
 table(xx[[1]]) # frequency table
-
-rm(xx) # remove object from environment
 ```
 
 ```{r eval = FALSE}
@@ -256,8 +308,6 @@ yy = classify(y, mat)
 
 plot(yy, col = c("blue", "red"))
 table(values(yy))
-
-rm(yy)
 ```
 
 
