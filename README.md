@@ -22,7 +22,7 @@ The operating system is arbitrary, but make sure all packages are working proper
 
 **Software:**
 
- - **R**: R, RStudio, sf, stars, terra
+ - **R**: R, RStudio, sf, stars, terra, bench, microbenchmark
  - **Python**: Python, Jupyter Notebook, geopandas, rasterio
 
 If possible, you should use the latest software versions.
