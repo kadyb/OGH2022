@@ -4,7 +4,7 @@
 
 
 
-If you are a beginner in spatial world, you will find interesting books here:
+If you are a beginner in spatial data science, you will find interesting books here:
  - [Spatial Data Science with applications in R](https://www.r-spatial.org/book)
  - [Spatial Data Science with R and “terra”](https://rspatial.org/terra/)
  - [Geocomputation with R](https://geocompr.robinlovelace.net/)
@@ -14,13 +14,13 @@ If you are a beginner in spatial world, you will find interesting books here:
 
 ## Requirements
 
-**Hardware requirements:**
+**Hardware:**
 
 Your hardware should have a minimum of 8 GB RAM.
 In case you do not have access to such a configuration, there is a small raster file in the "data" folder, which can be used for this workshop.
 The operating system is arbitrary, but make sure all packages are working properly.
 
-**Software requirements:**
+**Software:**
 
  - **R**: R, RStudio, sf, stars, terra
  - **Python**: Python, Jupyter Notebook, geopandas, rasterio
