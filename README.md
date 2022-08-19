@@ -1,8 +1,10 @@
-# OGH2022
+This repository contains materials for workshop "**Benchmarking R and Python for spatial data processing**" on OpenGeoHub Summer School 2022.
 
 ## Introduction
 
-
+R and Python are the two most popular scripting languages used to process spatial data.
+Both are great alternatives to desktop GIS software allowing for reproducible research.
+In this workshop, we will examine the differences between the most popular packages for spatial data processing and test their performance.
 
 If you are a beginner in spatial data science, you will find interesting books here:
  - [Spatial Data Science with applications in R](https://www.r-spatial.org/book)
@@ -11,6 +13,8 @@ If you are a beginner in spatial data science, you will find interesting books h
  - [sf tutorials](https://r-spatial.github.io/sf/articles/), and [stars tutorials](https://r-spatial.github.io/stars/articles/)
  - [Introduction to Python for Geographic Data Analysis](https://pythongis.org/)
  - [Geocomputation with Python](https://geocompr.github.io/py/)
+
+If you would like to see extended versions of the benchmarks, here are the repositories for the [vector](https://github.com/kadyb/vector-benchmark) and [raster](https://github.com/kadyb/raster-benchmark) packages.
 
 ## Requirements
 
