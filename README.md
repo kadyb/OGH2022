@@ -29,7 +29,16 @@ If possible, you should use the latest software versions.
 
 ## Materials
 
-- [R](https://kadyb.github.io/OGH2022/R.html)
+ - [R](https://kadyb.github.io/OGH2022/R.html)
+ - Python
+
+To start Jupyter Notebook, type in the terminal (or Anaconda Prompt):
+
+```
+jupyter notebook
+```
+
+Then it will launch the environment in your web browser.
 
 ## Contact
  
