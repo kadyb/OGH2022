@@ -1,4 +1,4 @@
-This repository contains materials for workshop "**Benchmarking R and Python for spatial data processing**" on OpenGeoHub Summer School 2022.
+This repository contains materials for the "**Benchmarking R and Python for spatial data processing**" workshop on OpenGeoHub Summer School 2022.
 
 ## Introduction
 
