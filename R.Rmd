@@ -27,9 +27,9 @@ To view the documentation, use the question mark "?" before the function name.
 We will test it on an example.
 
 ```{r}
-# generate numbers from normal distribution
-# (n = 10,000,000)
-t = system.time(rnorm(1e7))
+# sample numbers with replacement
+# (n = 1,000,000)
+t = system.time(sample(1:100, 1e6, replace = TRUE))
 t
 ```
 
@@ -97,7 +97,7 @@ For more information, see the books:
 
 **Exercise** 
 
-Compare computing the mean value of the vector using `mean()` and `sum() / length ()` functions.
+Compare computing the mean value of the vector using `mean()` and `sum() / length()` functions.
 
 # Part I: Raster Data
 
