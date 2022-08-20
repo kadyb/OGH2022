@@ -29,7 +29,7 @@ The operating system is arbitrary, but make sure all packages are working proper
  - **R**: R, RStudio, sf, stars, terra, bench, microbenchmark
  - **Python**: Python, Jupyter Notebook, geopandas*, rasterio
 
-* geopandas is much faster when pygeos is installed
+*geopandas is much faster when pygeos is installed
 
 If possible, you should use the latest software versions.
 
