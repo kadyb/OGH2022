@@ -10,7 +10,6 @@ If you are a beginner in spatial data science, you will find interesting books h
  - [Spatial Data Science with applications in R](https://www.r-spatial.org/book)
  - [Spatial Data Science with R and “terra”](https://rspatial.org/terra/)
  - [Geocomputation with R](https://geocompr.robinlovelace.net/)
- - [sf tutorials](https://r-spatial.github.io/sf/articles/), and [stars tutorials](https://r-spatial.github.io/stars/articles/)
  - [Introduction to Python for Geographic Data Analysis](https://pythongis.org/)
  - [Geocomputation with Python](https://geocompr.github.io/py/)
 
