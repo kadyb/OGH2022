@@ -14612,7 +14612,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># required libraries</span>
 <span class="c1"># import os, zipfile, timeit, random, statistics, urllib.request</span>
 <span class="c1"># import rasterio, rasterio.plot, rasterio.mask, rasterio.enums</span>
-<span class="c1"># import shapely.geometry</span>
+<span class="c1"># import shapely.geometry, geopandas</span>
 </pre></div>
 
      </div>
@@ -14698,7 +14698,7 @@ For this purpose, we can use <code>choices()</code> function from the <code>{ran
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>[82, 68, 84, 5, 39]</pre>
+<pre>[45, 43, 66, 69, 43]</pre>
 </div>
 
 </div>
@@ -14762,11 +14762,11 @@ The result will be a list with timings.</li>
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>[0.4387843909999998,
- 0.35567075899999967,
- 0.362185443,
- 0.3538073690000001,
- 0.358344534]</pre>
+<pre>[0.43726394499999977,
+ 0.36192870600000004,
+ 0.3805076780000003,
+ 0.36743679400000007,
+ 0.36362255500000007]</pre>
 </div>
 
 </div>
@@ -14822,7 +14822,7 @@ Statistical functions can be found in the <code>{statistics}</code> library.</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>0.37</pre>
+<pre>0.38</pre>
 </div>
 
 </div>
@@ -14836,7 +14836,7 @@ Statistical functions can be found in the <code>{statistics}</code> library.</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>0.0365</pre>
+<pre>0.0317</pre>
 </div>
 
 </div>
@@ -14892,7 +14892,7 @@ We can use the <code>timeit()</code> function with a percent symbol:</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>356 ms ± 4.24 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+<pre>371 ms ± 21.5 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
 </pre>
 </div>
 </div>
@@ -14932,7 +14932,7 @@ We can use the <code>timeit()</code> function with a percent symbol:</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>354 ms ± 4.68 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+<pre>360 ms ± 7.86 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
 </pre>
 </div>
 </div>
@@ -15091,7 +15091,8 @@ When the dataset consists of many files with the same spatial extent (e.g. satel
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>Let's print the metadata.</p>
+<p>Let's print the metadata.
+For a description of affine transformation parameters, see this <a href="https://www.perrygeo.com/python-affine-transforms.html">blogpost</a>.</p>
 
 </div>
 </div>
@@ -15261,7 +15262,7 @@ We can also check how much space this object takes up in memory using <code>.nby
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>As you can see, the structure of raster data in <code>{rasterio}</code> looks quite different than in R.
-Notice also that just storing objects in Python takes up less space.
+Notice also that the stored object takes up less space.
 Nevertheless, Python also uses the float (double) type for calculations.</p>
 
 </div>
@@ -15389,7 +15390,7 @@ jp-needs-light-background
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>312 ms ± 7.76 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+<pre>320 ms ± 10.4 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
 </pre>
 </div>
 </div>
@@ -15562,7 +15563,7 @@ jp-needs-light-background
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>351 ms ± 37.3 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+<pre>338 ms ± 23.7 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
 </pre>
 </div>
 </div>
@@ -15578,8 +15579,10 @@ jp-needs-light-background
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="Downsampling">Downsampling<a class="anchor-link" href="#Downsampling">&#182;</a></h4><p>Previously, in <code>{terra}</code> and <code>{stars}</code> we defined new rasters with lower resolution, while in <code>{rasterio}</code> the target number of columns and rows must be specified.
-(......)</p>
+<h4 id="Downsampling">Downsampling<a class="anchor-link" href="#Downsampling">&#182;</a></h4><p>Resampling in <code>{rasterio}</code> can be done at the data loading stage.
+We need to define the target number of rows and columns (while in <code>{terra}</code> and <code>{stars}</code> we defined the target resolution).
+All available resampling methods can be found <a href="https://rasterio.readthedocs.io/en/latest/api/rasterio.enums.html#rasterio.enums.Resampling">here</a>, but we will use "average" as before.
+After creating new raster at a lower resolution, we need to update the pixel size in the object with affine transformation parameters ourselves.</p>
 
 </div>
 </div>
@@ -15599,14 +15602,16 @@ jp-needs-light-background
 <span class="n">width_dest</span> <span class="o">=</span> <span class="mi">500</span>
 
 <span class="n">raster</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;data/srtm_39_02.tif&quot;</span><span class="p">)</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">meta</span>
 
 <span class="c1"># resample</span>
 <span class="n">raster_small</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
     <span class="n">out_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">height_dest</span><span class="p">,</span> <span class="n">width_dest</span><span class="p">),</span>
-    <span class="n">resampling</span> <span class="o">=</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">average</span>
+    <span class="n">resampling</span> <span class="o">=</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">average</span><span class="p">,</span>
+    <span class="n">masked</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span>
 
-<span class="c1"># update transform</span>
+<span class="c1"># update resolution</span>
 <span class="n">new_transform</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">transform</span> <span class="o">*</span> <span class="n">raster</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span>
     <span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">raster_small</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
     <span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="n">raster_small</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
@@ -15620,6 +15625,18 @@ jp-needs-light-background
 </div>
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Let's see the size of our raster after resampling.</p>
+
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -15629,8 +15646,6 @@ jp-needs-light-background
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">raster_small</span><span class="o">.</span><span class="n">shape</span>
-<span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">]</span>
-<span class="n">new_transform</span>
 </pre></div>
 
      </div>
@@ -15659,10 +15674,50 @@ jp-needs-light-background
 
 </div>
 
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Pixel size before and after resampling:</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;transform&quot;</span><span class="p">]</span>
+<span class="n">new_transform</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[21]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
 
 
 
@@ -15677,7 +15732,7 @@ jp-needs-light-background
 <div class="jp-OutputArea-child">
 
     
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[21]:</div>
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
 
 
 
@@ -15693,15 +15748,230 @@ jp-needs-light-background
 
 </div>
 
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>Benchmark:</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%time</span>it -r 5 -n 1
+<span class="n">raster</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;data/srtm_39_02.tif&quot;</span><span class="p">)</span>
+
+<span class="n">raster_small</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+    <span class="n">out_shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="n">height_dest</span><span class="p">,</span> <span class="n">width_dest</span><span class="p">),</span>
+    <span class="n">resampling</span> <span class="o">=</span> <span class="n">Resampling</span><span class="o">.</span><span class="n">average</span><span class="p">,</span>
+    <span class="n">masked</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span>
+
+
+<span class="n">new_transform</span> <span class="o">=</span> <span class="n">raster</span><span class="o">.</span><span class="n">transform</span> <span class="o">*</span> <span class="n">raster</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">width</span> <span class="o">/</span> <span class="n">raster_small</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+    <span class="p">(</span><span class="n">raster</span><span class="o">.</span><span class="n">height</span> <span class="o">/</span> <span class="n">raster_small</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+<span class="p">)</span>
+<span class="n">raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>628 ms ± 59.4 ms per loop (mean ± std. dev. of 5 runs, 1 loop each)
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Downsampling">Downsampling<a class="anchor-link" href="#Downsampling">&#182;</a></h4><p>Prepare a task in which you check the performance of pixel classification using the height condition.
+For example, all pixels above the threshold of 200 m will become 1, and all pixels below 0.
+See also section <a href="https://numpy.org/doc/stable/user/basics.indexing.html">Indexing on ndarrays</a> in the <code>{numpy}</code> documentation.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="Part-I:-Vector-Data">Part I: Vector Data<a class="anchor-link" href="#Part-I:-Vector-Data">&#182;</a></h2>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">geopandas</span>
+<span class="kn">import</span> <span class="nn">random</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Data-Source">Data Source<a class="anchor-link" href="#Data-Source">&#182;</a></h3><p>In R, we used a random seed to make the generated data the same every time.
+In Python, we can do exactly the same (<code>random.seed()</code> function).
+However, setting the same seed in both environments will not result in identical data (but there are <a href="https://github.com/GjjvdBurg/SyncRNG">ways</a> to solve it).
+For this reason, we will use the data we <a href="https://kadyb.github.io/OGH2022/R.html#Data_Source10">created</a> earlier in R -- to compare exactly the same things.
+Nevertheless, this is what a Python implementation could look like (but it's not the only way):</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%%capture</span> --no-stdout
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">200000</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span> <span class="c1"># create empty lists</span>
+
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">15</span><span class="p">))</span>
+    <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">55</span><span class="p">))</span>
+
+<span class="n">pts</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">GeoSeries</span><span class="o">.</span><span class="n">from_xy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">crs</span> <span class="o">=</span> <span class="s2">&quot;EPSG:4326&quot;</span><span class="p">)</span>
+<span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">3857</span><span class="p">)</span>
+<span class="n">pts</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s2">&quot;data/points2.gpkg&quot;</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Benchmarks">Benchmarks<a class="anchor-link" href="#Benchmarks">&#182;</a></h3>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Data-Loading">Data Loading<a class="anchor-link" href="#Data-Loading">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Buffers">Buffers<a class="anchor-link" href="#Buffers">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Distance">Distance<a class="anchor-link" href="#Distance">&#182;</a></h4>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h4 id="Excercise">Excercise<a class="anchor-link" href="#Excercise">&#182;</a></h4><p>Write and test a function that returns raster values for a point layer.
+The <a href="https://rasterio.readthedocs.io/en/latest/api/rasterio.sample.html">rasterio.sample</a> module will be helpful for this (note that a list of coordinates is expected, not geometries).</p>
+
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pts</span> <span class="o">=</span> <span class="n">geopandas</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s2">&quot;data/points.gpkg&quot;</span><span class="p">)</span>
+<span class="n">pts</span> <span class="o">=</span> <span class="n">pts</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+<span class="c1"># convert GeoDataFrame to list of coordinates</span>
+<span class="n">xy</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">x</span> <span class="p">,</span> <span class="n">pts</span><span class="p">[</span><span class="s2">&quot;geometry&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">y</span><span class="p">)]</span>
+
+<span class="n">raster</span> <span class="o">=</span> <span class="n">rasterio</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s2">&quot;data/srtm_39_02.tif&quot;</span><span class="p">)</span>
+<span class="n">pts</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">raster</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">xy</span><span class="p">)]</span>
+<span class="n">raster</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 
      </div>
