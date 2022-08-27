@@ -25,17 +25,17 @@ The operating system is arbitrary, but make sure all packages are working proper
 
 **Software:**
 
- - **R**: R, RStudio, sf, stars, terra, bench, microbenchmark
- - **Python**: Python, Jupyter Notebook, geopandas*, rasterio
+ - **R**: RStudio, sf, stars, terra, bench, microbenchmark
+ - **Python**: Jupyter Notebook, geopandas*, rasterio
 
-*geopandas is much faster when pygeos is installed
+*geopandas is much faster when pygeos is installed (reading and writing is also faster with pyogrio)
 
 If possible, you should use the latest software versions.
 
 ## Materials
 
- - [R](https://kadyb.github.io/OGH2022/R.html)
- - [Python](https://kadyb.github.io/OGH2022/Python.html)
+ 1. [R](https://kadyb.github.io/OGH2022/R.html)
+ 2. [Python](https://kadyb.github.io/OGH2022/Python.html)
 
 To start Jupyter Notebook, type in the terminal (or Anaconda Prompt):
 
