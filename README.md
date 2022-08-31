@@ -1,4 +1,10 @@
+# Spatial benchmarks
+
 This repository contains materials for the "**Benchmarking R and Python for spatial data processing**" workshop on [OpenGeoHub Summer School 2022](https://opengeohub.org/summer-school/siegburg-2022/).
+
+You can find an extended version of the benchmarks in these repositories:
+  - [Vector benchmark](https://github.com/kadyb/vector-benchmark)
+  - [Raster benchmark](https://github.com/kadyb/raster-benchmark)
 
 ## Introduction
 
@@ -12,8 +18,6 @@ If you are a beginner in spatial data science, you will find interesting books h
  - [Geocomputation with R](https://geocompr.robinlovelace.net/)
  - [Introduction to Python for Geographic Data Analysis](https://pythongis.org/)
  - [Geocomputation with Python](https://geocompr.github.io/py/)
-
-If you would like to see extended versions of the benchmarks, here are the repositories for the [vector](https://github.com/kadyb/vector-benchmark) and [raster](https://github.com/kadyb/raster-benchmark) packages.
 
 ## Requirements
 
